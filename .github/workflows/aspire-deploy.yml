@@ -9,6 +9,11 @@ permissions:
     id-token: write # This is required for requesting the JWT
     contents: read  # This is required for actions/checkout
 
+env:
+  AZURE_CLIENT_ID: d423db9c-6902-474f-a711-eef63db13c7d
+  AZURE_TENANT_ID: bf3ae910-a895-44e6-aed1-0ed9601d9035
+  AZURE_SUBSCRIPTION_ID: f48841d5-ea07-4c72-b6ec-52266b6176db
+
 jobs:
   aspire_deploy:
     runs-on: ubuntu-latest
@@ -39,9 +44,20 @@ jobs:
       - name: Azure Login
         uses: azure/login@v2
         with:
-          client-id: d423db9c-6902-474f-a711-eef63db13c7d
-          tenant-id: bf3ae910-a895-44e6-aed1-0ed9601d9035
-          subscription-id: f48841d5-ea07-4c72-b6ec-52266b6176db
+          client-id: ${{ env.AZURE_CLIENT_ID }}
+          tenant-id: ${{ env.AZURE_TENANT_ID }}
+          subscription-id: ${{ env.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get Service Principal Object ID
+        id: get-spn-id
+        run: |
+          set -e
+          OBJECT_ID=$(az ad sp show --id ${{ env.AZURE_CLIENT_ID }} --query id -o tsv)
+          if [ -z "$OBJECT_ID" ]; then
+            echo "Error: Failed to retrieve service principal object ID"
+            exit 1
+          fi
+          echo "spn_object_id=$OBJECT_ID" >> $GITHUB_OUTPUT
       
       - name: Deploy with Aspire
         run: aspire deploy --project ./apphost.cs --environment Production
@@ -53,7 +69,8 @@ jobs:
           DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
           DOTNET_MULTILEVEL_LOOKUP: 0
           DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
-          Azure__SubscriptionId: f48841d5-ea07-4c72-b6ec-52266b6176db
-          Azure__TenantId: bf3ae910-a895-44e6-aed1-0ed9601d9035
+          Azure__SubscriptionId: ${{ env.AZURE_SUBSCRIPTION_ID }}
+          Azure__TenantId: ${{ env.AZURE_TENANT_ID }}
           Azure__Location: West Europe
           Azure__ResourceGroup: My
+          Azure__PrincipalId: ${{ steps.get-spn-id.outputs.spn_object_id }}
