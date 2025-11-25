@@ -5,27 +5,43 @@
 
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddDockerComposeEnvironment("dc");
 
-var apiService = builder.AddProject("apiservice", "./ApiService")
-    .WithExternalHttpEndpoints();
 
-var viteApp = builder.AddViteApp("frontend", "./frontend")
-    .WithExternalHttpEndpoints()
-    .WithReference(apiService);
+if (builder.Environment.EnvironmentName == "Produdction")
+{
+    var redis = builder.AddAzureRedis("redis");
+}
+else
+{
+    builder.AddDockerComposeEnvironment("dc");
 
-var redis = builder.AddAzureRedis("redis");
+    var apiService = builder.AddProject("apiservice", "./ApiService")
+        .WithExternalHttpEndpoints();
+
+    var viteApp = builder.AddViteApp("frontend", "./frontend")
+        .WithExternalHttpEndpoints()
+        .WithReference(apiService);
+
+    var redis = builder.AddAzureRedis("redis")
+        .RunAsContainer();
 
 #pragma warning disable ASPIREPIPELINES001
 #pragma warning disable ASPIREPIPELINES004
 
-builder.Pipeline.AddStep("validate-deployment", async context =>
-{
-   
-   context.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Information, 100, $"Environment Process: {Environment.CurrentDirectory}", null, (s, e) => s.ToString());
+    builder.Pipeline.AddStep("validate-deployment", async context =>
+    {
 
-    
-}, dependsOn: "docker-compose-up-dc");
+        context.Logger.Log(Microsoft.Extensions.Logging.LogLevel.Information, 100, $"Environment Process: {Environment.CurrentDirectory}", null, (s, e) => s.ToString());
+
+
+    }, dependsOn: "docker-compose-up-dc");
+
+#pragma warning restore ASPIREPIPELINES001
+#pragma warning restore ASPIREPIPELINES004
+}
+
+
+
 
 
 builder.Build().Run();
