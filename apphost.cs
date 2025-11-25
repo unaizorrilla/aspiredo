@@ -9,7 +9,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 
 if (builder.Environment.EnvironmentName == "Produdction")
 {
-    var redis = builder.AddAzureManagedRedis("redis");
+    var redis = builder.AddAzureRedis("redis");
 }
 else
 {
