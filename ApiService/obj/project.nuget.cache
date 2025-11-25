@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "CM8NKV2p6Yk=",
+  "success": true,
+  "projectFilePath": "/home/unai/code/experiments/aspiredo/ApiService/ApiService.csproj",
+  "expectedPackageFiles": [
+    "/home/unai/.nuget/packages/microsoft.aspnetcore.openapi/10.0.0/microsoft.aspnetcore.openapi.10.0.0.nupkg.sha512",
+    "/home/unai/.nuget/packages/microsoft.openapi/2.0.0/microsoft.openapi.2.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

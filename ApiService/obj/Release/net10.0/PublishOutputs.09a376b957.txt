@@ -1,0 +1,9 @@
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/ApiService
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/appsettings.Development.json
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/appsettings.json
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/ApiService.dll
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/ApiService.deps.json
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/ApiService.runtimeconfig.json
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/ApiService.pdb
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/Microsoft.AspNetCore.OpenApi.dll
+/home/unai/code/experiments/aspire/viteapp/viteapp/ApiService/bin/Release/net10.0/publish/Microsoft.OpenApi.dll

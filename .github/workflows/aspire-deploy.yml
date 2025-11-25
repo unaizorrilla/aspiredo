@@ -1,0 +1,58 @@
+name: Aspire Deploy CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+    id-token: write # This is required for requesting the JWT
+    contents: read  # This is required for actions/checkout
+
+jobs:
+  aspire_deploy:
+    runs-on: ubuntu-latest
+    name: Deploy with Aspire
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          lfs: false
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      
+      - name: Install Aspire CLI (Native AOT)
+        run: curl -sSL https://aspire.dev/install.sh | bash -s -- -q dev
+      
+      - name: Add Aspire CLI to PATH
+        run: echo "$HOME/.aspire/bin" >> $GITHUB_PATH
+
+      - name: LS
+        run: ls -a
+      
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          client-id: d423db9c-6902-474f-a711-eef63db13c7d
+          tenant-id: bf3ae910-a895-44e6-aed1-0ed9601d9035
+          subscription-id: f48841d5-ea07-4c72-b6ec-52266b6176db
+      
+      - name: Deploy with Aspire
+        run: aspire deploy --project ./apphost.cs --environment Production
+        env:
+          DOTNET_CLI_TELEMETRY_OPTOUT: 1
+          DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+          DOTNET_NOLOGO: true
+          DOTNET_GENERATE_ASPNET_CERTIFICATE: false
+          DOTNET_ADD_GLOBAL_TOOLS_TO_PATH: false
+          DOTNET_MULTILEVEL_LOOKUP: 0
+          DOTNET_SYSTEM_CONSOLE_ALLOW_ANSI_COLOR_REDIRECTION: true
+          Azure__SubscriptionId: f48841d5-ea07-4c72-b6ec-52266b6176db
+          Azure__Location: West Europe
+          Azure__ResourceGroup: My
