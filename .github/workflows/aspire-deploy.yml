@@ -42,6 +42,12 @@ jobs:
           client-id: d423db9c-6902-474f-a711-eef63db13c7d
           tenant-id: bf3ae910-a895-44e6-aed1-0ed9601d9035
           subscription-id: f48841d5-ea07-4c72-b6ec-52266b6176db
+
+      - name: Get Service Principal Object ID
+        id: get-spn-id
+        run: |
+          OBJECT_ID=$(az ad sp show --id d423db9c-6902-474f-a711-eef63db13c7d --query id -o tsv)
+          echo "spn_object_id=$OBJECT_ID" >> $GITHUB_OUTPUT
       
       - name: Deploy with Aspire
         run: aspire deploy --project ./apphost.cs --environment Production
@@ -57,3 +63,4 @@ jobs:
           Azure__TenantId: bf3ae910-a895-44e6-aed1-0ed9601d9035
           Azure__Location: West Europe
           Azure__ResourceGroup: My
+          Azure__PrincipalId: ${{ steps.get-spn-id.outputs.spn_object_id }}
